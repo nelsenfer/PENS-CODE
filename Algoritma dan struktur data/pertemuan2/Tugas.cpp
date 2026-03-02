@@ -3,7 +3,7 @@ using namespace std;
 
 struct Node
 {
-    int data;
+    string data;
     Node *next;
 };
 
@@ -11,7 +11,7 @@ Node *head = nullptr;
 
 void SpawnAnemy()
 {
-    int value;
+    string value;
     cout << "Masukkan nilai enemy: ";
     cin >> value;
 
@@ -40,7 +40,7 @@ void InsertAnemyBefore()
         return;
     }
 
-    int key, value;
+    string key, value;
     cout << "Masukkan target (sebelum nilai ini): ";
     cin >> key;
     cout << "Masukkan nilai enemy baru: ";
@@ -85,7 +85,7 @@ void killAnemy()
         return;
     }
 
-    int key;
+    string key;
     cout << "Masukkan nilai enemy yang ingin dihapus: ";
     cin >> key;
 
