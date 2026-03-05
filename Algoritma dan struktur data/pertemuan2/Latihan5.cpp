@@ -116,7 +116,7 @@ int main()
     }
     cout << "NULL" << endl;
 
-    deleteByValue(22);
+    deleteByValue(20);
 
     temp = head;
     while (temp != nullptr)

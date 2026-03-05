@@ -35,6 +35,7 @@ int main()
     insertBack(10);
     insertBack(20);
     insertBack(30);
+    insertBack(40);
 
     Node *temp = head;
     while (temp != nullptr)

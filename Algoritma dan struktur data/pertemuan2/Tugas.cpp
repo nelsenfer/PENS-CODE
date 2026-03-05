@@ -12,7 +12,7 @@ Node *head = nullptr;
 void SpawnAnemy()
 {
     string value;
-    cout << "Masukkan nilai enemy: ";
+    cout << "Masukkan nama enemy: ";
     cin >> value;
 
     Node *newNode = new Node;
@@ -41,9 +41,9 @@ void InsertAnemyBefore()
     }
 
     string key, value;
-    cout << "Masukkan target (sebelum nilai ini): ";
+    cout << "Masukkan target (sebelum nama ini): ";
     cin >> key;
-    cout << "Masukkan nilai enemy baru: ";
+    cout << "Masukkan nama enemy baru: ";
     cin >> value;
 
     if (head->data == key)
@@ -86,7 +86,7 @@ void killAnemy()
     }
 
     string key;
-    cout << "Masukkan nilai enemy yang ingin dihapus: ";
+    cout << "Masukkan nama enemy yang ingin dihapus: ";
     cin >> key;
 
     if (head->data == key)
