@@ -3,7 +3,7 @@ using namespace std;
 
 struct Node
 {
-    int data;
+    string data;
     Node *next;
 };
 
@@ -11,8 +11,8 @@ Node *head = nullptr;
 
 void SpawnAnemy()
 {
-    int value;
-    cout << "Masukkan nilai enemy: ";
+    string value;
+    cout << "Masukkan nama enemy: ";
     cin >> value;
 
     Node *newNode = new Node;
@@ -40,10 +40,10 @@ void InsertAnemyBefore()
         return;
     }
 
-    int key, value;
-    cout << "Masukkan target (sebelum nilai ini): ";
+    string key, value;
+    cout << "Masukkan target (sebelum nama ini): ";
     cin >> key;
-    cout << "Masukkan nilai enemy baru: ";
+    cout << "Masukkan nama enemy baru: ";
     cin >> value;
 
     if (head->data == key)
@@ -85,8 +85,8 @@ void killAnemy()
         return;
     }
 
-    int key;
-    cout << "Masukkan nilai enemy yang ingin dihapus: ";
+    string key;
+    cout << "Masukkan nama enemy yang ingin dihapus: ";
     cin >> key;
 
     if (head->data == key)
