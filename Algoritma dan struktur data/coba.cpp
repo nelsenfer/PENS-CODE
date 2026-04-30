@@ -1,66 +1,24 @@
 #include <iostream>
 using namespace std;
 
-struct Node
+void preorder(int level, string nama)
 {
-    int data;
-    Node *next;
-};
+    cout << "MASUK: " << nama << " (level " << level << ")" << endl;
 
-Node *head = nullptr;
-
-// Fungsi tambah di belakang
-void insertBack(int value)
-{
-    Node *newNode = new Node;
-    newNode->data = value;
-    newNode->next = nullptr;
-
-    if (head == nullptr)
+    if (level >= 2)
     {
-        head = newNode;
+        cout << "KELUAR: " << nama << endl;
         return;
     }
 
-    Node *temp = head;
-    while (temp->next != nullptr)
-    {
-        temp = temp->next;
-    }
+    preorder(level + 1, nama + "->kiri");
+    preorder(level + 1, nama + "->kanan");
 
-    temp->next = newNode;
-}
-
-// Fungsi tampilkan list
-void printList()
-{
-    Node *temp = head;
-
-    while (temp != nullptr)
-    {
-        cout << temp->data << " -> ";
-        temp = temp->next;
-    }
-
-    cout << "NULL" << endl;
+    cout << "KELUAR: " << nama << endl;
 }
 
 int main()
 {
-    int jumlah, nilai;
-
-    cout << "Masukkan jumlah node: ";
-    cin >> jumlah;
-
-    for (int i = 0; i < jumlah; i++)
-    {
-        cout << "Masukkan nilai node ke-" << i + 1 << ": ";
-        cin >> nilai;
-        insertBack(nilai);
-    }
-
-    cout << "\nIsi Linked List:\n";
-    printList();
-
+    preorder(0, "A");
     return 0;
 }
