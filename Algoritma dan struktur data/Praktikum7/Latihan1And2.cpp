@@ -23,7 +23,7 @@ void preorder(Node *root)
     preorder(root->left);
     preorder(root->right);
 }
-
+// latihan 2
 // INORDER
 void inorder(Node *root)
 {
@@ -42,6 +42,7 @@ void postorder(Node *root)
     postorder(root->right);
     cout << root->data << " ";
 }
+// latihan 2 sampai sini
 int main()
 {
     Node *A = createNode('A');
