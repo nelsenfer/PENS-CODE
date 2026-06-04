@@ -7,24 +7,23 @@ void tukar(int &a, int &b)
     b = temp;
 }
 
-// sorting dengan bubble sort
+// sorting dengan selection sort
 int main()
 {
     int arr[4] = {8, 3, 5, 1};
-    int n = 4;
-    for (int i = 0; i < n; i++)
-    {
-        int minIndex = i;
-        for (int j = i + 1; j < n; j++)
-        {
-            if (arr[j] < arr[minIndex])
-            {
-                minIndex = j;
-            }
-        }
-        tukar(arr[i], arr[minIndex]);
-    }
-    for (int i = 0; i < n; i++)
+    if (arr[0] > arr[1])
+        tukar(arr[0], arr[1]);
+    if (arr[0] > arr[2])
+        tukar(arr[0], arr[2]);
+    if (arr[0] > arr[3])
+        tukar(arr[0], arr[3]);
+    if (arr[1] > arr[2])
+        tukar(arr[1], arr[2]);
+    if (arr[1] > arr[3])
+        tukar(arr[1], arr[3]);
+    if (arr[2] > arr[3])
+        tukar(arr[2], arr[3]);
+    for (int i = 0; i < 4; i++)
         cout << arr[i] << " ";
     return 0;
 }
