@@ -1,0 +1,1 @@
+turn enemyList[0].first
