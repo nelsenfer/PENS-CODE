@@ -1,1 +1,2 @@
-
+hero.displayHealth();
+    monster.displayHealth();
