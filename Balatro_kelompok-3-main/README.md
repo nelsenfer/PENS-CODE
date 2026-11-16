@@ -6,11 +6,15 @@ Proyek ini adalah implementasi sistem pengecekan kombinasi kartu (Poker Hand Che
 
 Fase permainan dalam Game Manager berjalan secara berurutan pada setiap rondenya:
 
-Hand Generation Phase: Sistem (HandGenerator) menghasilkan kombinasi kartu untuk pemain pada ronde tersebut.
+Hand Generation Phase: Sistem (HandGenerator) mengacak deck standar 52 kartu dan menghasilkan 8 kartu unik untuk pemain pada ronde tersebut.
 
-Hand Evaluation Phase: Kombinasi kartu dievaluasi oleh rantai PokerHandChecker (bergerak dari kombinasi tertinggi hingga terendah).
+Hand Selection Phase: HandSelector memeriksa seluruh 56 kombinasi 5 kartu dari 8 kartu yang tersedia melalui rantai checker, lalu memilih kombinasi dengan HandRank tertinggi.
 
-Scoring Phase: Sistem (ScoringRule) menghitung skor dasar (base score) berdasarkan hasil evaluasi kombinasi kartu.
+Hand Evaluation Phase: Lima kartu terpilih dievaluasi kembali oleh rantai PokerHandChecker (bergerak dari kombinasi tertinggi hingga terendah).
+
+Scoring Phase: Sistem (ScoringRule) menghitung `Chips` dari base hand dan nilai kartu yang dimainkan, lalu mengalikannya dengan `Mult` dasar kombinasi (`Chips x Mult`).
+
+Joker Phase: JokerCard menerima notifikasi ketika hand dimainkan dan menambahkan bonus `+1 Mult` sebelum Blind diperiksa.
 
 Blind Check Phase: Sistem (BlindRule) mengecek apakah skor yang diraih memenuhi target Blind untuk memenangkan ronde tersebut.
 

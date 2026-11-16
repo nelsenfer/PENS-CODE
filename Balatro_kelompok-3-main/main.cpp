@@ -6,7 +6,9 @@ using namespace std;
 // File .cpp berikut digunakan sebagai bagian dari satu program.
 #include "HandChecker.cpp"
 #include "HandGenerator.cpp"
+#include "HandSelector.cpp"
 #include "GameRules.cpp"
+#include "JokerCard.cpp"
 #include "GameManager.cpp"
 
 int main()
