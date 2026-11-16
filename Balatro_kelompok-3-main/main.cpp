@@ -1,20 +1,7 @@
-#include <cstdlib>
-#include <ctime>
+#include "GameManager.h"
+#include "HandChecker.h"
 
-using namespace std;
-
-// File .cpp berikut digunakan sebagai bagian dari satu program.
-#include "HandChecker.cpp"
-#include "HandGenerator.cpp"
-#include "HandSelector.cpp"
-#include "GameRules.cpp"
-#include "JokerCard.cpp"
-#include "GameManager.cpp"
-
-int main()
-{
-    srand(static_cast<unsigned int>(time(nullptr)));
-
+int main() {
     FlushFiveChecker c13;
     FlushHouseChecker c12;
     FiveOfAKindChecker c11;
@@ -44,6 +31,5 @@ int main()
 
     GameManager game(&c13);
     game.runSession();
-
     return 0;
 }

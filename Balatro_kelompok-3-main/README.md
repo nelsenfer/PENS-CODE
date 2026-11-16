@@ -20,6 +20,17 @@ Blind Check Phase: Sistem (BlindRule) mengecek apakah skor yang diraih memenuhi 
 
 Reward & Resolution Phase: Pemain mendapatkan uang (RewardRule) jika berhasil lolos Blind, atau Game Over jika gagal.
 
+Struktur file dipisahkan antara deklarasi header dan implementasi source:
+
+- `Card.h` dan `Hand.h`: model kartu dan hand.
+- `HandChecker.h/.cpp`: Chain of Responsibility.
+- `HandGenerator.h/.cpp`: pembuatan deck dan 8 kartu.
+- `HandSelector.h/.cpp`: pemilihan otomatis 5 kartu terbaik.
+- `GameRules.h/.cpp`: scoring, Blind, dan reward.
+- `JokerCard.h/.cpp`: modifier Joker.
+- `GameManager.h/.cpp`: orkestrasi game loop.
+- `main.cpp`: penyusunan chain dan entry point.
+
 2. Invariants (Komponen yang Tidak Boleh Berubah)
 
 Urutan Pengecekan Kartu (Chain Order):
