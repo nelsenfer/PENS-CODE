@@ -28,6 +28,7 @@ int main()
 {
     Player p(100);
     // p.health = 50; // Error: 'health' is private within this context
+    cout << "Health: " << p.gethealth() << endl; // Output: Health: 100
     p.takedamage(20);
     cout << "Health: " << p.gethealth() << endl; // Output: Health: 70
     return 0;
