@@ -1,68 +1,158 @@
-Task - Chain of Responsibility: Balatro
+# Balatro - Chain of Responsibility
 
-Proyek ini adalah implementasi sistem pengecekan kombinasi kartu (Poker Hand Checker) yang terinspirasi dari mekanisme game Balatro. Sistem ini dibangun menggunakan design pattern Chain of Responsibility di C++ untuk memastikan evaluasi kartu berjalan efisien, modular, dan mudah dikembangkan.
+Proyek ini adalah implementasi sederhana mekanisme poker ala Balatro menggunakan
+C++ dan design pattern Chain of Responsibility. Program menggunakan deck standar
+52 kartu, memilih kartu secara otomatis, mengevaluasi kombinasi poker, menghitung
+score `Chips x Mult`, lalu memproses Joker, Blind, dan reward.
 
-1. Core Loop
+## Alur Permainan
 
-Fase permainan dalam Game Manager berjalan secara berurutan pada setiap rondenya:
+Setiap ronde menjalankan urutan berikut:
 
-Hand Generation Phase: Sistem (HandGenerator) mengacak deck standar 52 kartu dan menghasilkan 8 kartu unik untuk pemain pada ronde tersebut.
+```text
+Generate 8 kartu
+    -> Pilih 5 kartu terbaik dari 56 kombinasi
+    -> Evaluasi kombinasi dengan Chain of Responsibility
+    -> Hitung Chips x Mult
+    -> Joker menambahkan bonus Mult
+    -> Cek Blind
+    -> Berikan reward atau Game Over
+```
 
-Hand Selection Phase: HandSelector memeriksa seluruh 56 kombinasi 5 kartu dari 8 kartu yang tersedia melalui rantai checker, lalu memilih kombinasi dengan HandRank tertinggi.
+### 1. Generate Hand
 
-Hand Evaluation Phase: Lima kartu terpilih dievaluasi kembali oleh rantai PokerHandChecker (bergerak dari kombinasi tertinggi hingga terendah).
+`HandGenerator` membuat deck standar berisi 52 kartu dari empat suit
+(`Hearts`, `Diamonds`, `Clubs`, `Spades`) dan rank 2 sampai Ace. Deck diacak,
+lalu 8 kartu diambil tanpa duplikasi. Kartu yang sudah diambil dikeluarkan dari
+deck dan deck di-reset jika kartu tersisa kurang dari 8.
 
-Scoring Phase: Sistem (ScoringRule) menghitung `Chips` dari base hand dan nilai kartu yang dimainkan, lalu mengalikannya dengan `Mult` dasar kombinasi (`Chips x Mult`).
+### 2. Choose/Play Hand
 
-Joker Phase: JokerCard menerima notifikasi ketika hand dimainkan dan menambahkan bonus `+1 Mult` sebelum Blind diperiksa.
+`HandSelector::playHand()` membuat seluruh kombinasi 5 kartu dari 8 kartu
+tersedia:
 
-Blind Check Phase: Sistem (BlindRule) mengecek apakah skor yang diraih memenuhi target Blind untuk memenangkan ronde tersebut.
+```text
+C(8, 5) = 56 kombinasi
+```
 
-Reward & Resolution Phase: Pemain mendapatkan uang (RewardRule) jika berhasil lolos Blind, atau Game Over jika gagal.
+Setiap kombinasi dikirim ke checker. Kombinasi dengan `HandRank` tertinggi
+dipilih. Jika rank sama, nilai rank kartu tertinggi digunakan sebagai
+tie-breaker.
 
-Struktur file dipisahkan antara deklarasi header dan implementasi source:
+### 3. Evaluasi Chain
 
-- `Card.h` dan `Hand.h`: model kartu dan hand.
-- `HandChecker.h/.cpp`: Chain of Responsibility.
-- `HandGenerator.h/.cpp`: pembuatan deck dan 8 kartu.
-- `HandSelector.h/.cpp`: pemilihan otomatis 5 kartu terbaik.
+Urutan Chain harus tetap dari kombinasi tertinggi ke terendah:
+
+```text
+Flush Five
+Flush House
+Five of a Kind
+Royal Flush
+Straight Flush
+Four of a Kind
+Full House
+Flush
+Straight
+Three of a Kind
+Two Pair
+Pair
+High Card
+```
+
+Untuk satu kombinasi, chain berhenti ketika checker menemukan hasil yang cocok.
+Selector tetap memeriksa kombinasi lain karena hasil yang lebih tinggi mungkin
+ada pada kombinasi berikutnya.
+
+### 4. Scoring
+
+`ScoringRule` menggunakan rumus:
+
+```text
+Total Score = (Base Chips + nilai kartu dimainkan) x Mult
+```
+
+J, Q, K, dan Ace dihitung sebagai 10 Chips. Nilai dasar `Chips` dan `Mult`
+berbeda untuk setiap kombinasi poker.
+
+### 5. Joker
+
+`JokerCard` menerima notifikasi setelah hand dimainkan:
+
+```cpp
+jokerCard.onHandPlayed(score);
+score = jokerCard.modifyScore(score);
+```
+
+Joker sederhana yang digunakan saat ini memberikan bonus `+1 Mult`. Bonus
+diterapkan sebelum Blind diperiksa.
+
+### 6. Blind dan Reward
+
+`BlindRule` menentukan kemenangan berdasarkan total score. Jika menang,
+`RewardRule` menambahkan money. Jika gagal melewati Blind, ronde dihentikan dan
+game berakhir.
+
+## Struktur File
+
+### Model Data
+
+- `Card.h`: `Suit`, `Rank`, `Card`, dan fungsi format nama kartu.
+- `Hand.h`: `HandRank`, `Hand`, dan `EvaluationResult`.
+
+### Pembuatan dan Pemilihan Kartu
+
+- `HandGenerator.h/.cpp`: membuat dan mengacak deck serta menghasilkan 8 kartu.
+- `HandSelector.h/.cpp`: memeriksa 56 kombinasi dan memilih 5 kartu terbaik.
+
+### Evaluasi Kartu
+
+- `HandChecker.h/.cpp`: deklarasi dan implementasi Chain of Responsibility.
+
+### Aturan Permainan
+
 - `GameRules.h/.cpp`: scoring, Blind, dan reward.
 - `JokerCard.h/.cpp`: modifier Joker.
-- `GameManager.h/.cpp`: orkestrasi game loop.
-- `main.cpp`: penyusunan chain dan entry point.
 
-2. Invariants (Komponen yang Tidak Boleh Berubah)
+### Game Loop
 
-Urutan Pengecekan Kartu (Chain Order):
-Rantai checker TIDAK BOLEH dibalik atau diacak. Evaluasi harus selalu dimulai dari kombinasi tertinggi (Flush Five) turun hingga ke terendah (High Card).
+- `GameManager.h/.cpp`: mengatur urutan seluruh fase permainan.
+- `main.cpp`: membuat checker dan menyusun chain.
 
-Urutan Core Loop:
-Kartu harus di-generate -> Dievaluasi -> Dihitung Skornya -> Dicek terhadap Blind -> Diberikan Reward. Urutan eksekusi ini absolut.
+Header dan source dipisahkan. `main.cpp` tidak meng-include file `.cpp`;
+seluruh source dikompilasi bersama.
 
-Apa yang rusak jika urutannya diubah?
-Jika urutan Chain of Responsibility diubah (misalnya PairChecker diletakkan sebelum FullHouseChecker), maka saat pemain memiliki kartu Full House, sistem akan langsung mendeteksinya sebagai Pair dan menghentikan pengecekan. Hal ini akan merusak logika fundamental permainan Poker.
+## Kompilasi dan Menjalankan Program
 
-3. Mutable Elements (Komponen Fleksibel)
+Dari folder proyek:
 
-Internal Checker Logic (Logika Validasi Kombinasi):
-Cara setiap kelas (seperti FlushChecker atau StraightChecker) memvalidasi isi vektor kartu bebas dimodifikasi tanpa mengganggu rantai utama.
+```bash
+g++ -std=c++11 -Wall -Wextra -pedantic *.cpp -o main.exe
+main.exe
+```
 
-Aturan Permainan (Scoring, Blind, Reward):
-Angka target Blind, rumus perhitungan poin di ScoringRule, dan kalkulasi uang di RewardRule adalah komponen yang sangat fleksibel (mutable) dan bisa diganti untuk melakukan balancing pada gameplay.
+Program menampilkan:
 
-Mekanisme Generasi Kartu:
-Logika di dalam HandGenerator bebas diubah, misalnya dari sekadar simulasi nilai acak menjadi sistem deck kartu yang sesungguhnya (tarik kartu, discard, dll).
+- 8 `availableCards`.
+- 5 `playedCards`.
+- Kombinasi yang ditemukan.
+- Chips, Mult, dan total score.
+- Status Blind.
+- Reward dan total money.
 
-4. Technical Reflection
+## Invariants
 
-1. Apa struktur invariant dari game kamu?
-Struktur invariant di proyek ini adalah arsitektur Chain of Responsibility pada pengecekan kartu dan core loop pertarungan di GameManager. Pengecekan wajib mengalir satu arah ke bawah hingga ada node yang berhasil mengidentifikasi kartu. Pemanggilan antar-objek dalam putaran juga bersifat kaku: kita tidak mungkin mengecek Blind (syarat menang) sebelum mengetahui hasil evaluasi kartu dan skornya.
+Komponen berikut harus dipertahankan:
 
-2. Bagian mana yang mutable?
-Bagian yang mutable adalah implementasi detail (logika di dalam fungsi override) dari setiap node checker, serta parameter-parameter skor/uang. Antarmuka PokerHandChecker menyembunyikan bagaimana sebuah Flush dicek, sehingga kita bisa bebas merombak algoritma pencarian suit kartu di dalam FlushChecker tanpa harus menyentuh kelas GameManager.
+1. Urutan Chain dari `Flush Five` sampai `High Card`.
+2. Semua kombinasi 5 kartu dari 8 kartu harus dipertimbangkan.
+3. Checker hanya mengevaluasi kartu dan tidak mengubah `playedCards`.
+4. `GameManager` menjalankan urutan generate, select, evaluate, score, Joker,
+   Blind, dan reward.
+5. Tidak boleh ada kartu duplikat dalam hand yang dihasilkan.
 
-3. Jika ingin menambah fitur baru, kelas mana yang akan berubah?
-Jika saya ingin menambah kombinasi kartu rahasia baru (misalnya "Giga Flush"), saya tidak perlu mengedit GameManager. Saya hanya perlu membuat kelas GigaFlushChecker baru yang mewarisi PokerHandChecker, lalu menyisipkannya ke urutan teratas di dalam fungsi main(). Ini sangat sejalan dengan prinsip Open-Closed (terbuka untuk ekstensi, tertutup untuk modifikasi).
+## Komponen yang Dapat Dikembangkan
 
-4. Jika urutan loop diubah, apa yang akan rusak?
-Seperti yang dijelaskan pada bagian Invariant, mengubah hierarki Chain of Responsibility akan menghancurkan sistem hierarki nilai Poker (kartu kuat dianggap kartu lemah). Selain itu, mengacak urutan runSession() di GameManager (misalnya menghitung skor sebelum mengecek kartu) akan membuat game crash atau menghasilkan status data yang tidak valid (garbage value).
+- Menambah checker baru dengan menempatkannya pada posisi yang tepat di chain.
+- Mengubah nilai base Chips, Mult, Blind, atau reward.
+- Menambah jenis Joker baru melalui `JokerCard`.
+- Mengembangkan efek kartu, discard, upgrade, atau sistem shop.
